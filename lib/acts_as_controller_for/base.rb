@@ -50,17 +50,22 @@ module ActsAsControllerFor
         end
       end
       
+      # <tt>block</tt> - the optional block defines the value of the models instance variable set for this action
       # GET /models/:id
       # GET /models/:id.xml
       # GET /models/:id.json
-      def show
+      def show(&block)
         model = self.class.send :class_variable_get, :@@model
         options = self.class.send :class_variable_get, :@@options
         
         inst_var_ref = "@#{model.name.underscore}".to_sym
         
-        if !options[:load_and_authorize]
-          instance_variable_set inst_var_ref, model.find(params[:id])
+        if block
+          instance_variable_set inst_var_ref, yield
+        else
+          if !options[:load_and_authorize]
+            instance_variable_set inst_var_ref, model.find(params[:id])
+          end
         end
     
         respond_to do |format|
@@ -82,15 +87,20 @@ module ActsAsControllerFor
         end
       end
     
+      # <tt>block</tt> - the optional block defines the value of the models instance variable set for this action
       # GET /models/:id/edit
-      def edit
+      def edit(&block)
         model = self.class.send :class_variable_get, :@@model
         options = self.class.send :class_variable_get, :@@options
         
         inst_var_ref = "@#{model.name.underscore}".to_sym
         
-        if !options[:load_and_authorize]
-          instance_variable_set inst_var_ref, model.find(params[:id])
+        if block
+          instance_variable_set inst_var_ref, yield
+        else
+          if !options[:load_and_authorize]
+            instance_variable_set inst_var_ref, model.find(params[:id])
+          end
         end
       end
       
